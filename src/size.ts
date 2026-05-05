@@ -48,6 +48,9 @@ export class Size implements TSize {
     throw new Error('unsupported arguments.')
   }
 
+  /** @returns {number} Width‑to‑height ratio. */
+  get ratio () { return this.height / this.width }
+
   /**
    * Scales the size by multiplying with the given values.
    * @param value - A number to scale both dimensions, or an object with width and height properties

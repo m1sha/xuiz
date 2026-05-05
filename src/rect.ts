@@ -142,7 +142,7 @@ export class Rect {
   }
 
   /** @returns {number} Width‑to‑height ratio. */
-  get ratio () { return this.width / this.height }
+  get ratio () { return this.height / this.width }
 
   /** @returns {Size} Current size as a {@link Size} instance. */
   get size () {
@@ -754,6 +754,15 @@ export class Rect {
     throw new Error('Unsupport arguments.')
   }
 
+   /** 
+   * Creates a square
+   * @param sideLength - Length of side of rectangle
+   * @returns New rectangle
+   */
+  static square (sideLength: number): Rect {
+    return Rect.size(sideLength, sideLength)
+  }
+
   /** 
    * Creates a rectangle from TRect or array format
    * @param rect - Rectangle data as TRect or [x,y,width,height]
@@ -796,6 +805,18 @@ export class Rect {
     const w = side === 'width' ? length : length / ratio
     const h = side === 'height' ? length : length * ratio
     return new Rect(0, 0, w, h)
+  }
+
+  /**
+   * Scales the rectangle to a specified length while maintaining its aspect ratio.
+   * The length is applied to the longest side of the rectangle.
+   * @param originRect - The source rectangle to scale.
+   * @param length - The target length for the dominant side.
+   * @returns A new Rect scaled proportionally to the given length.
+   */
+  static scaleToFit (originSize: Rect | TRect | TSize | Size, length: number): Rect {
+    const size = originSize instanceof Rect ? originSize : new Size(originSize)
+    return Rect.fromRatio(size.ratio, length, size.width > size.height ? 'width' : 'height')
   }
 
   /** 
