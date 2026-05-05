@@ -617,6 +617,17 @@ export class Rect {
     return this
   }
 
+  /**
+   * Sets a rectangle values x, y, width and height to current rectangle
+   * @param rect - Rectangle for set to current rectangle
+   */
+  set (rect: TRect | Rect): void {
+    this.x = rect.x
+    this.y = rect.y
+    this.width = rect.width
+    this.height = rect.height
+  }
+
   /** 
    * Rotates the rectangle around a pivot point
    * @param a - Rotation angle in degrees
