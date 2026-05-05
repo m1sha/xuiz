@@ -280,7 +280,6 @@ export class Point {
     }
     
     throw new Error('unsupported arguments.')
-    
   }
 
   scaleSelf (d: number): Point 
@@ -306,6 +305,20 @@ export class Point {
     }
     
     throw new Error('unsupported arguments.')
+  }
+
+  scaleTo (d: number, target: TPoint | Point): Point 
+  scaleTo (dp: TPoint, target: TPoint | Point): Point 
+  scaleTo (dx: number, dy: number, target: TPoint | Point): Point
+  scaleTo (...args: Array<any>): Point  {
+    return scaleTo(this, args)
+  }
+
+  scaleToSelf (d: number): Point 
+  scaleToSelf (dp: TPoint): Point 
+  scaleToSelf (dx: number, dy: number): Point
+  scaleToSelf (...args: Array<any>): Point  {
+    return this.moveSelf(scaleTo(this, args))
   }
 
   /**
@@ -793,7 +806,7 @@ export class Point {
  * @param {any} value - Value to check
  * @returns {boolean} True if value is TPoint
  */
-export function isTPoint (value: any) {
+export function isTPoint (value: any): value is TPoint {
   const point = value as TPoint
   return point && typeof point.x === 'number' && typeof point.y === 'number'
 }
@@ -905,4 +918,32 @@ export function subPoints (p0: TPoint, p1: TPoint): TPoint {
  */
 export function gl_normalize({ x, y }: TPoint, w: number, h: number) {
   return setPoint (x / (w * 0.5)  -  1.0, 1.0 - y / (h * 0.5))
+}
+
+const scaleTo = (self: TPoint, args: Array<any>): Point => {
+  let dx = 0
+  let dy = 0
+  let target = setPoint(0, 0)
+
+  if (typeof args[0] === 'number' && isTPoint(args[1])) {
+    dx = dy = args[0]
+    target = args[1]
+  }
+
+  if (isTPoint(args[0]) && isTPoint(args[1])) {
+    dx = args[0].x
+    dy = args[0].y
+    target = args[1]
+  }
+
+  if (typeof args[0] === 'number' && typeof args[1] === 'number' && isTPoint(args[2])) {
+    dx = args[0]
+    dy = args[1]
+    target = args[2]
+  }
+
+  const x = dx * (self.x - target.x) + target.x
+  const y = dy * (self.y - target.y) + target.y
+
+  return new Point(x, y)
 }
